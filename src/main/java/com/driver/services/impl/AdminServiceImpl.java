@@ -81,8 +81,8 @@ public class AdminServiceImpl implements AdminService {
         }else throw new Exception("Country not found");
 
         // saving all entities and updating foreign keys
-        countryRepository1.save(country);
-
+//        countryRepository1.save(country);
+        country.setServiceProvider(serviceProvider);
         serviceProvider.getCountryList().add(country);
         serviceProviderRepository1.save(serviceProvider);
 
