@@ -23,59 +23,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(String username, String password, String countryName) throws Exception{
-        // creating new objects of User and Country
         User user = new User();
-        Country country = new Country();
+        if(countryName.equalsIgnoreCase("IND") || countryName.equalsIgnoreCase("USA")|| countryName.equalsIgnoreCase("JPN")|| countryName.equalsIgnoreCase("AUS")|| countryName.equalsIgnoreCase("CHI")){
+            user.setUsername(username);
+            user.setPassword(password);
 
-        // setting all attributes of user
-        user.setUsername(username);
-        user.setPassword(password);
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // setting all attributes of country
-        String newCountry = countryName.toUpperCase();
-        CountryName enumCountryName = null;
-        boolean isCountryValid = false;
-
-        // looping through enums
-        for (CountryName name : CountryName.values()) {
-            if(newCountry.equals(name)){
-                isCountryValid = true;
-                enumCountryName = name;
-                break;
+            Country country = new Country(); //linking
+            if(countryName.equalsIgnoreCase("IND")){
+                country.setCountryName(CountryName.IND);
+                country.setCode(CountryName.IND.toCode());
             }
+            else if(countryName.equalsIgnoreCase("USA")){
+                country.setCountryName(CountryName.USA);
+                country.setCode(CountryName.USA.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("JPN")){
+                country.setCountryName(CountryName.JPN);
+                country.setCode(CountryName.JPN.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("CHI")){
+                country.setCountryName(CountryName.CHI);
+                country.setCode(CountryName.CHI.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("AUA")){
+                country.setCountryName(CountryName.AUS);
+                country.setCode(CountryName.AUS.toCode());
+            }
+
+            country.setUser(user); //reverse linking
+            user.setOriginalCountry(country);
+            user.setConnected(false); //vpn main goal
+
+            String code = country.getCode()+"."+userRepository3.save(user).getId();
+            user.setOriginalIp(code); //new
+
+            userRepository3.save(user);
+
+
         }
-
-        // throwing exception if country is not present
-        if(isCountryValid == false) throw new Exception("Country not found");
-
-        if(enumCountryName != null){
-            country.setCountryName(enumCountryName);
-            country.setCode(enumCountryName.toCode());
+        else{  //means user is null
+            throw new Exception("Country not found");
         }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // setting foreign keys
-        user.setOriginalCountry(country);
-        country.setUser(user);
-
-        // saving all entities
-
-        user = userRepository3.save(user);
-        countryRepository3.save(country);
-
-        // adding ips
-        String originalIp = enumCountryName.toCode() + "." + user.getId();
-        user.setConnected(false);
-        user.setMaskedIp(null);
-
-        userRepository3.save(user);
-
         return user;
-
     }
 
     @Override
@@ -85,6 +74,8 @@ public class UserServiceImpl implements UserService {
 
         user.getServiceProviderList().add(serviceProvider);
         serviceProvider.getUsers().add(user);
+
+        serviceProviderRepository3.save(serviceProvider);
 
         return user;
     }
