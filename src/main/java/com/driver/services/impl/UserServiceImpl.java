@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // setting foreign keys
-        user.setCountry(country);
+        user.setOriginalCountry(country);
         country.setUser(user);
 
         // saving all entities
