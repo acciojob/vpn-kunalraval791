@@ -56,27 +56,29 @@ public class AdminServiceImpl implements AdminService {
         ServiceProvider serviceProvider = serviceProviderRepository1.findById(serviceProviderId).get();
 
         Country country = new Country();
-        String newCountry = countryName.toUpperCase();
-        CountryName enumCountryName = null;
-        boolean isCountryValid = false;
 
-        // looping through enums
-        for (CountryName name : CountryName.values()) {
-            if(newCountry.equals(name)){
-                isCountryValid = true;
-                enumCountryName = name;
-                break;
+        if(countryName.equalsIgnoreCase("IND") || countryName.equalsIgnoreCase("USA")|| countryName.equalsIgnoreCase("JPN")|| countryName.equalsIgnoreCase("AUS")|| countryName.equalsIgnoreCase("CHI")){
+            if(countryName.equalsIgnoreCase("IND")){
+                country.setCountryName(CountryName.IND);
+                country.setCode(CountryName.IND.toCode());
             }
-        }
-
-        // throwing exception if country is not present
-        if(isCountryValid == false) throw new Exception("Country not found");
-
-        if(enumCountryName != null){
-            country.setCountryName(enumCountryName);
-            country.setCode(enumCountryName.toCode());
-            country.setUser(null);
-        }
+            else if(countryName.equalsIgnoreCase("USA")){
+                country.setCountryName(CountryName.USA);
+                country.setCode(CountryName.USA.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("AUS")){
+                country.setCountryName(CountryName.AUS);
+                country.setCode(CountryName.AUS.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("CHI")){
+                country.setCountryName(CountryName.CHI);
+                country.setCode(CountryName.CHI.toCode());
+            }
+            else if(countryName.equalsIgnoreCase("JPN")){
+                country.setCountryName(CountryName.JPN);
+                country.setCode(CountryName.JPN.toCode());
+            }
+        }else throw new Exception("Country not found");
 
         // saving all entities and updating foreign keys
         countryRepository1.save(country);
